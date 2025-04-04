@@ -1,25 +1,25 @@
 import { GraphQLClient } from "graphql-request";
 import { getSdk } from "./__generated/graphql";
 
-export const endpoint = process.env.HYGRAPH_ENDPOINT || "";
+const endpoint = process.env.HYGRAPH_ENDPOINT || "";
 
-export const HygraphClient = (
-  { preview }: { preview: boolean } = { preview: false }
-) => {
+const createHygraphClient = (isDraftMode = false) => {
   if (!endpoint) {
     throw new Error("HYGRAPH_ENDPOINT is not defined");
   }
 
   const client = new GraphQLClient(endpoint);
 
-  if (preview) {
+  if (isDraftMode) {
     client.setHeader(
       "Authorization",
       `Bearer ${process.env.HYGRAPH_PREVIEW_TOKEN}`
     );
   }
 
-  return client;
+  return getSdk(client);
 };
 
-export const hygraph = getSdk(HygraphClient({ preview: false }));
+export const getHygraphSDK = (isDraftMode = false) => {
+  return createHygraphClient(isDraftMode);
+};
