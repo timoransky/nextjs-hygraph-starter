@@ -32,7 +32,7 @@ export async function GET(request: Request) {
   if (model === "page") {
     modelUrl = "/";
   } else if (model === "post") {
-    modelUrl = "/posts/";
+    modelUrl = "/post/";
   }
 
   // Redirect to the path
