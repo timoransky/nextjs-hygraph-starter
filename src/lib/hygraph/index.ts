@@ -11,10 +11,13 @@ const createHygraphClient = (isDraftMode = false) => {
   const client = new GraphQLClient(endpoint);
 
   if (isDraftMode) {
-    client.setHeader(
-      "Authorization",
-      `Bearer ${process.env.HYGRAPH_PREVIEW_TOKEN}`
-    );
+    const previewToken = process.env.HYGRAPH_PREVIEW_TOKEN || "";
+
+    if (previewToken) {
+      client.setHeader("Authorization", `Bearer ${previewToken}`);
+    } else {
+      console.error("HYGRAPH_PREVIEW_TOKEN is not defined while in draft mode");
+    }
   }
 
   return getSdk(client);
