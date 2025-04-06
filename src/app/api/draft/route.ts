@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   const model = searchParams.get("model");
   const slug = searchParams.get("slug");
 
-  if (secret !== process.env.HYGRAPH_PREVIEW_SECRET && !model && !slug) {
+  if (secret !== process.env.HYGRAPH_PREVIEW_SECRET && (!model || !slug)) {
     return new Response("Missing parameters", { status: 400 });
   }
 
@@ -28,6 +28,13 @@ export async function GET(request: Request) {
     sameSite: "none",
   });
 
+  let modelUrl = "";
+  if (model === "page") {
+    modelUrl = "/";
+  } else if (model === "post") {
+    modelUrl = "/posts/";
+  }
+
   // Redirect to the path
-  redirect(`/${model}/${slug}`);
+  redirect(`${modelUrl}${slug}`);
 }
