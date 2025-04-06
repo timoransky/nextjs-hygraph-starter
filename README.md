@@ -1,10 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Hygraph Starter
+
+This is a modern [Next.js](https://nextjs.org) starter template integrated with [Hygraph CMS](https://hygraph.com), designed to be easily forkable and adjustable to your project needs. It features a complete setup with shadcn/ui, Hygraph live preview support, and GraphQL code generation.
+
+## Features
+
+- **Next.js 15+**: Utilizes the latest App Router architecture
+- **Hygraph CMS Integration**: Ready-to-use GraphQL client and query setup
+- **TypeScript**: Fully typed codebase with GraphQL type generation
+- **Live Preview**: Real-time content preview with Draft Mode support
+- **shadcn/ui**: Pre-configured component library with Tailwind CSS
+- **GraphQL Codegen**: Automated type generation from GraphQL schemas
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Before you start, make sure you have a Hygraph account and project set up
+
+### Environment Setup
+
+Create a `.env` file in the root of your project with the following variables:
 
 ```bash
+# Required: Your Hygraph API endpoint
+HYGRAPH_ENDPOINT="https://api-xx-xxx.hygraph.com/v2/your-project-id/master"
+
+# Required for Preview Mode: Your Hygraph Content API token with appropriate permissions
+HYGRAPH_PREVIEW_TOKEN="your-preview-token"
+
+# Required for Preview Mode: A secret string used to secure preview requests
+HYGRAPH_PREVIEW_SECRET="your-random-secret-string"
+```
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+# or
+yarn
+# or
+pnpm install
+# or
+bun install
+
+# Generate GraphQL types (requires environment variables)
+npm run codegen
+# or
+yarn codegen
+# or
+pnpm codegen
+# or
+bun codegen
+
+# Start the development server
 npm run dev
 # or
 yarn dev
@@ -16,21 +65,69 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── codegen.ts               # GraphQL code generation configuration
+├── components.json          # shadcn/ui configuration
+├── src/
+│   ├── app/                 # Next.js App Router pages
+│   │   ├── actions.ts       # Server actions (for Draft Mode)
+│   │   ├── api/
+│   │   │   └── draft/       # Draft mode API route
+│   │   │       └── route.ts
+│   ├── components/
+│   │   ├── draft-mode-toast.tsx  # UI component for Draft Mode indication
+│   │   └── ui/              # shadcn/ui components
+│   └── lib/
+│       ├── utils.ts         # Utility functions
+│       └── hygraph/         # Hygraph integration
+│           ├── index.ts     # GraphQL client setup
+│           ├── __generated/ # Auto-generated GraphQL types
+│           └── queries/     # GraphQL query files
+```
+
+## How Hygraph Integration Works
+
+### GraphQL Client
+
+The GraphQL client is set up in `src/lib/hygraph/index.ts` and provides:
+
+- Automatic environment-based configuration
+- Draft mode support through preview tokens
+- Type-safe SDK generation from GraphQL operations
+
+### GraphQL Code Generation
+
+The project uses GraphQL Code Generator to create TypeScript types from your GraphQL schema and operations:
+
+1. Write your GraphQL queries in `.graphql` files under `src/lib/hygraph/queries/`
+2. Run `npm run codegen` to generate TypeScript types
+3. Import and use the generated types and operations in your components
+
+The codegen configuration (`codegen.ts`) is set up to:
+
+- Read your schema from the Hygraph endpoint
+- Process all `.graphql` files in the queries directory
+- Generate fully typed GraphQL operations and SDK
+
+### Live Preview Mode
+
+The starter includes a complete implementation of Hygraph's Live Preview feature:
+
+1. The `/api/draft/route.ts` endpoint enables draft mode when requested from Hygraph
+2. The `DraftModeToast` component shows when draft mode is active
+3. The Hygraph client detects draft mode and sends the preview token when needed
+
+## Deployment
+
+This starter can be deployed on any platform that supports Next.js, such as Vercel, Netlify, or a custom server.
+
+Make sure to add your environment variables to your deployment platform.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Hygraph Documentation](https://hygraph.com/docs)
+- [GraphQL Code Generator](https://www.graphql-code-generator.com/)
+- [shadcn/ui Documentation](https://ui.shadcn.com/)
