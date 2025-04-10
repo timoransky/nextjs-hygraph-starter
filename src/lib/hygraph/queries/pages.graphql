@@ -1,0 +1,27 @@
+query allPages {
+  pages {
+    id
+    slug
+    title
+  }
+}
+
+query singlePage($slug: String!) {
+  page(where: { slug: $slug }) {
+    title
+    subtitle
+    seoOverride {
+      title
+      image {
+        height
+        width
+        url
+      }
+      description
+    }
+    content {
+      html
+      raw
+    }
+  }
+}
