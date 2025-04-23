@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useHygraphQuery } from "@/lib/hygraph/useHygraphQuery";
+import { useHygraphSdk } from "@/lib/hygraph/useHygraphSdk";
 import { use } from "react";
 import { RichText } from "@graphcms/rich-text-react-renderer";
 import Link from "next/link";
@@ -11,11 +11,11 @@ export default function Page({
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
-  // This is an example of how to use the useHygraphQuery hook in a client component
-  // to fetch data from Hygraph. The useHygraphQuery hook is a custom hook
+  // This is an example of how to use the useHygraphSdk hook in a client component
+  // to fetch data from Hygraph. The useHygraphSdk hook is a custom hook
   // that uses SWR to fetch data from the Hygraph API.
   const { slug } = use(params);
-  const { data, isLoading, error } = useHygraphQuery("singlePage", {
+  const { data, isLoading, error } = useHygraphSdk("singlePage", {
     slug: slug[0],
   });
 

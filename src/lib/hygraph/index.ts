@@ -23,6 +23,6 @@ const createHygraphClient = (isDraftMode = false) => {
   return getSdk(client);
 };
 
-export const getHygraphSDK = (isDraftMode = false) => {
+export const getHygraphSdk = (isDraftMode = false) => {
   return createHygraphClient(isDraftMode);
 };

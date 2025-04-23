@@ -25,8 +25,6 @@ const fetcher = async ({ op, variables }: SdkQuery) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ op, variables }),
-    // Make sure we're not caching by default in development
-    cache: process.env.NODE_ENV === "development" ? "no-store" : "default",
   });
 
   const json = await res.json();
@@ -40,7 +38,7 @@ const fetcher = async ({ op, variables }: SdkQuery) => {
   return json;
 };
 
-export function useHygraphQuery<T extends keyof SdkReturnTypes>(
+export function useHygraphSdk<T extends keyof SdkReturnTypes>(
   op: T,
   variables?: Parameters<Sdk[T]>[0],
   swrOptions?: SWRConfiguration

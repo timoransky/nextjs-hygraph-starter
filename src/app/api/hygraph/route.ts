@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getHygraphSDK } from "@/lib/hygraph";
+import { getHygraphSdk } from "@/lib/hygraph";
 
 export async function POST(req: Request) {
   try {
@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     console.log(`[API] Hygraph operation requested: ${op}`, variables);
 
     // Get the SDK instance
-    const sdk = getHygraphSDK();
+    const sdk = getHygraphSdk();
 
     // Check if the operation exists in the SDK
     if (typeof sdk[op as keyof typeof sdk] !== "function") {

@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { getHygraphSDK } from "@/lib/hygraph";
+import { getHygraphSdk } from "@/lib/hygraph";
 import { RichText } from "@graphcms/rich-text-react-renderer";
 import Link from "next/link";
 
 async function getPage(slug: string) {
   const { isEnabled } = await draftMode();
-  const sdk = getHygraphSDK(isEnabled);
+  const sdk = getHygraphSdk(isEnabled);
   const { page } = await sdk.singlePage({ slug: slug ?? "home" });
   return page;
 }
