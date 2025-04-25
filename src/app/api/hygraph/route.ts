@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getHygraphSdk } from "@/lib/hygraph";
+import { getHygraphSdk } from "@/lib/hygraph/server";
 
 // Define allowed operations, which are the names of the queries/mutations in your GraphQL schema
 // that you want to expose through this API route.

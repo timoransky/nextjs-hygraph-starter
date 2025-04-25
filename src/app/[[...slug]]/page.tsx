@@ -1,22 +1,25 @@
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { getHygraphSdk } from "@/lib/hygraph";
+import { getHygraphSdk } from "@/lib/hygraph/server";
 import { RichText } from "@graphcms/rich-text-react-renderer";
 import Link from "next/link";
 
-async function getPage(slug: string) {
+async function getPage(slug?: string[]) {
   const { isEnabled } = await draftMode();
   const sdk = getHygraphSdk(isEnabled);
-  const { page } = await sdk.singlePage({ slug: slug ?? "home" });
+  const { page } = await sdk.singlePage({
+    slug: slug ? slug.join("/") : "home",
+  });
   return page;
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string[] }>;
 }) {
-  const page = await getPage(params.slug);
+  const { slug } = await params;
+  const page = await getPage(slug);
   if (!page) return notFound();
 
   return {
@@ -25,8 +28,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const page = await getPage(params.slug);
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
+  const { slug } = await params;
+  const page = await getPage(slug);
 
   if (!page) {
     return notFound();

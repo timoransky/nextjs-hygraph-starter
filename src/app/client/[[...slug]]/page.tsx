@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useHygraphSdk } from "@/lib/hygraph/useHygraphSdk";
+import { useHygraphSdk } from "@/lib/hygraph/client";
 import { use } from "react";
 import { RichText } from "@graphcms/rich-text-react-renderer";
 import Link from "next/link";
@@ -24,11 +24,11 @@ export default function Page({
     return <div>Error loading pages</div>;
   }
 
-  if (!data || isLoading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!data.page) {
+  if (!data || !data.page) {
     return notFound();
   }
 

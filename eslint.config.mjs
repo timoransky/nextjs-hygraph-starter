@@ -11,6 +11,12 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    ignores: [
+      // Ignore GraphQL generated files
+      "**/src/lib/hygraph/__generated/**/*",
+    ],
+  },
 ];
 
 export default eslintConfig;

@@ -42,7 +42,7 @@ export function useHygraphSdk<T extends keyof Sdk>(
   // Create the SWR key based on presence of variables
   const key = variables ? [op, JSON.stringify(variables)] : op;
 
-  return useSWR<SdkTypes[T]["result"]>(
+  return useSWR(
     key,
     () => fetcher<T>({ op, variables }) as Promise<SdkTypes[T]["result"]>,
     {
