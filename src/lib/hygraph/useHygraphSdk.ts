@@ -1,26 +1,23 @@
 import useSWR from "swr";
-import type { SWRConfiguration } from "swr";
 import { Sdk } from "./__generated/graphql";
 
-// Extract return types from the SDK
-type SdkReturnTypes = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [K in keyof Sdk]: Sdk[K] extends (variables?: any) => Promise<infer R>
-    ? R
-    : never;
+// Define a generic type for SDK operations
+type SdkOperation<T extends keyof Sdk> = Sdk[T];
+
+// Combined type for extracting both parameter and return types
+type SdkTypes = {
+  [K in keyof Sdk]: {
+    variables: Parameters<SdkOperation<K>>[0];
+    result: Awaited<ReturnType<SdkOperation<K>>>;
+  };
 };
 
-// Extract operation types from the SDK
-type SdkOperationTypes = keyof Sdk;
-
-interface SdkQuery {
-  op: SdkOperationTypes;
-  variables?: Record<string, unknown>;
+interface SdkQuery<T extends keyof Sdk> {
+  op: T;
+  variables?: SdkTypes[T]["variables"];
 }
 
-const fetcher = async ({ op, variables }: SdkQuery) => {
-  console.log(`[Client] Fetching ${op}`, variables);
-
+const fetcher = async <T extends keyof Sdk>({ op, variables }: SdkQuery<T>) => {
   const res = await fetch("/api/hygraph", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -34,24 +31,23 @@ const fetcher = async ({ op, variables }: SdkQuery) => {
     throw new Error(json.error || "Failed to fetch");
   }
 
-  console.log(`[Client] Received data for ${op}`);
   return json;
 };
 
-export function useHygraphSdk<T extends keyof SdkReturnTypes>(
-  op: T,
-  variables?: Parameters<Sdk[T]>[0],
-  swrOptions?: SWRConfiguration
+export function useHygraphSdk<T extends keyof Sdk>(
+  ...[op, variables]: undefined extends SdkTypes[T]["variables"]
+    ? [op: T, variables?: SdkTypes[T]["variables"]]
+    : [op: T, variables: SdkTypes[T]["variables"]]
 ) {
+  // Create the SWR key based on presence of variables
   const key = variables ? [op, JSON.stringify(variables)] : op;
 
-  return useSWR<SdkReturnTypes[T]>(
+  return useSWR<SdkTypes[T]["result"]>(
     key,
-    () => fetcher({ op, variables }) as Promise<SdkReturnTypes[T]>,
+    () => fetcher<T>({ op, variables }) as Promise<SdkTypes[T]["result"]>,
     {
       revalidateOnFocus: process.env.NODE_ENV !== "development",
       revalidateIfStale: true,
-      ...swrOptions,
     }
   );
 }

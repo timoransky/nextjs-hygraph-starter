@@ -82,20 +82,59 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 │   └── lib/
 │       ├── utils.ts         # Utility functions
 │       └── hygraph/         # Hygraph integration
-│           ├── index.ts     # GraphQL client setup
 │           ├── __generated/ # Auto-generated GraphQL types
-│           └── queries/     # GraphQL query files
+│           ├── queries/     # GraphQL query files
+│           └── index.ts     # GraphQL client setup
 ```
 
 ## How Hygraph Integration Works
 
 ### GraphQL Client
 
-The GraphQL client is set up in `src/lib/hygraph/index.ts` and provides:
+#### Server side (recommended)
+
+The GraphQL server client is set up in `src/lib/hygraph/index.ts` and provides:
 
 - Automatic environment-based configuration
 - Draft mode support through preview tokens
 - Type-safe SDK generation from GraphQL operations
+
+```
+import { getHygraphSdk } from "@/lib/hygraph";
+...
+const sdk = getHygraphSdk();
+const { page } = await sdk.singlePage({ slug });
+```
+
+#### Client side
+
+The client-side hook is provided in `src/lib/hygraph/useHygraphSdk.ts` and offers type-safe data fetching for client components using SWR:
+
+```tsx
+"use client";
+
+import { useHygraphSdk } from "@/lib/hygraph/useHygraphSdk";
+
+function ClientComponent({ slug }: { slug: string }) {
+  const { data, error, isLoading } = useHygraphSdk("singlePage", {
+    slug,
+  });
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading page</p>;
+
+  return <h1>{data?.page?.title}</h1>;
+}
+```
+
+**Features:**
+
+- **Type Safety**: The hook maintains full type safety with your GraphQL operations. TypeScript will enforce required variables and provide proper return types.
+- **Automatic Fetching**: Uses SWR under the hood for data fetching with caching, revalidation, and focus tracking.
+- **Smart Variable Handling**: The hook distinguishes between operations that require variables and those where variables are optional.
+- **Optimized for Development**: Disables revalidation on focus during development for a smoother experience.
+
+The hook calls the `/api/hygraph` endpoint which proxies requests to your Hygraph API, ensuring your API tokens remain secure on the server.
 
 ### GraphQL Code Generation
 

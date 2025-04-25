@@ -16,7 +16,7 @@ export default function Page({
   // that uses SWR to fetch data from the Hygraph API.
   const { slug } = use(params);
   const { data, isLoading, error } = useHygraphSdk("singlePage", {
-    slug: slug[0],
+    slug: slug.join("/"),
   });
 
   if (error) {
