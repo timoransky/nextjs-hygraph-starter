@@ -1,44 +1,38 @@
+"use client";
+
 import { notFound } from "next/navigation";
-import { draftMode } from "next/headers";
-import { getHygraphSdk } from "@/lib/hygraph/server";
+import { useHygraphSdk } from "@/lib/hygraph/client";
+import { use } from "react";
 import { RichText } from "@graphcms/rich-text-react-renderer";
 import Link from "next/link";
 
-async function getPage(slug?: string[]) {
-  const { isEnabled } = await draftMode();
-  const sdk = getHygraphSdk(isEnabled);
-  const { page } = await sdk.singlePage({
-    slug: slug ? slug.join("/") : "home",
+export default function Page({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
+  // This is an example of how to use the useHygraphSdk hook in a client component
+  // to fetch data from Hygraph. The useHygraphSdk hook is a custom hook
+  // that uses SWR to fetch data from the Hygraph API.
+  const { slug } = use(params);
+  const { data, isLoading, error } = useHygraphSdk("singlePage", {
+    slug: slug.join("/"),
   });
-  return page;
-}
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string[] }>;
-}) {
-  const { slug } = await params;
-  const page = await getPage(slug);
-  if (!page) return notFound();
+  if (error) {
+    console.error("Error fetching pages:", error);
+    return <div>Error loading pages</div>;
+  }
 
-  return {
-    title: page?.seoOverride?.title || page.title,
-    description: page.seoOverride?.description || page.subtitle,
-  };
-}
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string[] }>;
-}) {
-  const { slug } = await params;
-  const page = await getPage(slug);
-
-  if (!page) {
+  if (!data || !data.page) {
     return notFound();
   }
+
+  const page = data.page;
 
   return (
     <div className="relative isolate min-h-svh flex items-center justify-center overflow-hidden">
