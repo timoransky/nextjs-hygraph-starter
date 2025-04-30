@@ -111,12 +111,12 @@ const { page } = await sdk.singlePage({ slug });
 The client-side hook is provided in `src/lib/hygraph/useHygraphSdk.ts` and offers type-safe data fetching for client components using SWR:
 
 ```tsx
-"use client";
+'use client';
 
-import { useHygraphSdk } from "@/lib/hygraph/useHygraphSdk";
+import { useHygraphSdk } from '@/lib/hygraph/useHygraphSdk';
 
 function ClientComponent({ slug }: { slug: string }) {
-  const { data, error, isLoading } = useHygraphSdk("singlePage", {
+  const { data, error, isLoading } = useHygraphSdk('singlePage', {
     slug,
   });
 

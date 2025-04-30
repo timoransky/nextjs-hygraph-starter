@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { disableDraftMode } from "@/app/actions";
-import { useRouter } from "next/navigation";
-import { useEffect, useTransition } from "react";
-import { toast } from "sonner";
+import { disableDraftMode } from '@/app/actions';
+import { useRouter } from 'next/navigation';
+import { useEffect, useTransition } from 'react';
+import { toast } from 'sonner';
 
 export const DraftModeToast = () => {
   const router = useRouter();
@@ -12,14 +12,14 @@ export const DraftModeToast = () => {
   useEffect(() => {
     // Show the toast only if we are not in the Hygraph live preview iframe
     const isIframe =
-      typeof window !== "undefined" && window.self !== window.top;
+      typeof window !== 'undefined' && window.self !== window.top;
 
     if (!isIframe) {
-      const toastId = toast("Draft Mode Enabled", {
-        description: "You are currently previewing drafts",
+      const toastId = toast('Draft Mode Enabled', {
+        description: 'You are currently previewing drafts',
         duration: Infinity,
         action: {
-          label: "Disable",
+          label: 'Disable',
           onClick: async () => {
             await disableDraftMode();
             startTransition(() => {
@@ -36,7 +36,7 @@ export const DraftModeToast = () => {
 
   useEffect(() => {
     if (pending) {
-      const toastId = toast.loading("Disabling draft mode...");
+      const toastId = toast.loading('Disabling draft mode...');
       return () => {
         toast.dismiss(toastId);
       };
